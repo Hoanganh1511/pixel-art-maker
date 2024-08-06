@@ -8,6 +8,15 @@ const useDraw = (onDraw: ({ ctx, currentPoint, prevPoint }: Draw) => void) => {
   const onMouseDown = () => {
     setMouseDown(true);
   };
+  const clear = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!mouseDown) return;
@@ -34,11 +43,11 @@ const useDraw = (onDraw: ({ ctx, currentPoint, prevPoint }: Draw) => void) => {
     canvasRef.current?.addEventListener("mousemove", handler);
     window.addEventListener("mouseup", mouseUpHandler);
     return () => {
-      canvasRef.current?.addEventListener("mousemove", handler);
+      canvasRef.current?.removeEventListener("mousemove", handler);
       window.removeEventListener("mouseup", mouseUpHandler);
     };
   }, [onDraw]);
-  return { canvasRef, onMouseDown };
+  return { canvasRef, onMouseDown, clear };
 };
 
 export { useDraw };
